@@ -1,9 +1,40 @@
-# Content
+- [Content of this file](#content-of-this-file)
+- [Repository](#repository)
+  - [Repository creation on github and preparation on local repository](#repository-creation-on-github-and-preparation-on-local-repository)
+  - [Iterate the following process for each step](#iterate-the-following-process-for-each-step)
+- [Step 1](#step-1)
+- [Step 2](#step-2)
+  - [Note :](#note-)
+    - [without casm=true](#without-casmtrue)
+    - [with casm=true](#with-casmtrue)
+    - [Note on the prelude to be used](#note-on-the-prelude-to-be-used)
+- [Step 3](#step-3)
+- [Step 4](#step-4)
+  - [version 1 with the use of super::](#version-1-with-the-use-of-super)
+  - [version 2 with the use of mod](#version-2-with-the-use-of-mod)
+- [Step 5](#step-5)
+- [Step 6](#step-6)
+- [Step 7](#step-7)
+- [Step 8](#step-8)
+- [Step 9](#step-9)
+- [Step 10](#step-10)
+- [Step 11](#step-11)
+- [Step 12](#step-12)
+- [Step 13](#step-13)
+- [Step 14](#step-14)
+- [Step 15](#step-15)
+- [Deployed Contract](#deployed-contract)
+
+
+
+# Content of this file
 This file contains information for completing the various steps of the workshop.
+The step solution is commited in the step branches.
 
 This file also contains some useful tips.
 
-# Repository creation on github and preparation on local repository
+# Repository
+## Repository creation on github and preparation on local repository
 
 First create a private github repository called starknet-basecamp-x-counter-workshop.git without REAMME.md and without licence (to keep the starknet-edu counter workshop licence)
 
@@ -31,7 +62,7 @@ git checkout -b step15-js workshop/step15-js
 git checkout step1
 ````
 
-# Iterate the following process for each step
+## Iterate the following process for each step
 
 Do the step 1 and change the .gitignore to be able to save the work.
 
@@ -69,7 +100,7 @@ Iterate the process for the next steps.
 
 
 
-## Step 1
+# Step 1
 From the terminal, initialize the project with `scarb`, naming the package `workshop`.
 ```
 scarb init --name workshop
@@ -102,8 +133,8 @@ target
 `scarb clean` deletes the target folder.
 
 
-## Step 2
-### Note :
+# Step 2
+## Note :
 Without test script defined Scarb.toml, the output of scarb test is 
 ````
 scarb test
@@ -135,7 +166,7 @@ Running 1 test(s) from tests/
 Tests: 1 passed, 0 failed, 0 skipped, 0 ignored, 0 filtered out
 ````
 
-#### without casm=true
+### without casm=true
 ```
 gsbujo@macbook-air starknet-basecamp-x-counter-workshop % scarb build
    Compiling workshop v0.1.0 (/Users/gsbujo/projects/starknet/basecampx/starknet-basecamp-x-counter-workshop/Scarb.toml)
@@ -150,7 +181,7 @@ target
 2 directories, 3 files
 ```
 
-#### with casm=true
+### with casm=true
 This is necessary when we want to deploy the script (step 15)
 
 ```
@@ -202,7 +233,7 @@ The cairo prelude is a collection of commonly used modules, function, data types
 In the edition "2023_01", all was included. 
 In the edition "2024_07", not all is include (in this way it's possible to fine tuning what is included).
 
-## Step 3
+# Step 3
 
 The "Cairo 1.0" extension (Cairo for Visual Studio Code extension) provide a code completion.
 
@@ -218,7 +249,7 @@ Start typing constructor will popup the contextual menu. Choose constructor and 
 ````
 
 
-## Step 4
+# Step 4
 
 Create a view function:
 
@@ -239,7 +270,7 @@ pub trait ICounter<TContractState> {
 
 The implementation of the code logic goes inside the contract.
 It can be coded in 2 various correct ways:
-### version 1 with the use of super::
+## version 1 with the use of super::
 ````
 #[starknet::contract]
 pub mod counter_contract {
@@ -262,7 +293,7 @@ pub mod counter_contract {
 }
 ````
 
-### version 2 with the use of mod
+## version 2 with the use of mod
 
 ````
 #[starknet::contract]
@@ -290,8 +321,7 @@ pub mod counter_contract {
 
 Note : #[abi(embed_v0)] is used to exposed the implementation block.
 
-## Step 5
-
+# Step 5
 
 Implementation part can be
 ````
@@ -310,7 +340,7 @@ or simplier :
 ````
 
 
-## Step 6
+# Step 6
 
 Create the contract's event set by starting to type 'event'
 ````
@@ -346,7 +376,7 @@ It can be write in this way :
         }
 ````
 
-## Step 7
+# Step 7
 
 Deplare the kill_switch package as a dependency and allow its compilation. 
 
@@ -358,7 +388,7 @@ kill_switch = { git = "https://github.com/starknet-edu/kill-switch", branch = "m
 build-external-contracts = ["kill_switch::KillSwitch"]
 ````
 
-## Step 8
+# Step 8
 
 ````
 pub mod counter_contract {
@@ -382,7 +412,7 @@ pub mod counter_contract {
 }
 ````
 
-## Step 9
+# Step 9
 
 The compiler would automatically generate the dispatcher struct and the dispatcher trait for a given interface.
 
@@ -397,7 +427,7 @@ Use the dispatcher with :
 let kill_switch_dispatcher = IKillSwitchDispatcher { contract_address: self.kill_switch.read() };
 ````
 
-## Step 10
+# Step 10
 
 Note : We want allow to increase the counter if is_active() of KillSwitch returns false.
 ````
@@ -406,7 +436,7 @@ Note : We want allow to increase the counter if is_active() of KillSwitch return
             assert!(!kill_switch_dispatcher.is_active(), "Kill Switch is active");
 ````
 
-## Step 11
+# Step 11
 
 Just add the following in the Scarb.toml
 
@@ -415,7 +445,7 @@ Just add the following in the Scarb.toml
 openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.16.0" }
 ````
 
-## Step 12
+# Step 12
 
 See https://docs.openzeppelin.com/contracts-cairo/0.11.0/access
 
@@ -450,7 +480,7 @@ Embed the component's logic into our contract
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
 ````
 
-## Step 13
+# Step 13
 
 Update the constructor with initial_owner
 ````
@@ -462,7 +492,7 @@ Update the constructor with initial_owner
     }
 ````
 
-## Step 14
+# Step 14
 
 Just call the assert_only_owner() of Ownable at teh beginning of increase_counter()
 ````
@@ -472,7 +502,7 @@ Just call the assert_only_owner() of Ownable at teh beginning of increase_counte
         }
 ````
 
-## Step 15
+# Step 15
 
 ```
 npm run deploy 
@@ -488,6 +518,14 @@ Account connected.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 ✅ Contract has been deploy with the address: 0x26e71ff2372a908367e63015f43c67d23a0dd0f98b9d9b103f493d425eebebe
 ```
+
+
+# Deployed Contract
+
+Contrat address : 0x26e71ff2372a908367e63015f43c67d23a0dd0f98b9d9b103f493d425eebebe
+https://sepolia.voyager.online/contract/0x026e71Ff2372a908367E63015f43c67D23A0Dd0F98b9D9B103F493D425eeBeBE
+https://sepolia.starkscan.co/contract/0x026e71ff2372a908367e63015f43c67d23a0dd0f98b9d9b103f493d425eebebe
+
 
 Declare Contract transaction Id : 0x2726dc088c4c71ab5889cdaf7baa1dbfac187be87801bc4099b27d23bd36658
 https://sepolia.voyager.online/tx/0x2726dc088c4c71ab5889cdaf7baa1dbfac187be87801bc4099b27d23bd36658
